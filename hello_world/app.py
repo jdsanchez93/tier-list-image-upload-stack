@@ -1,4 +1,6 @@
 import json
+import boto3
+import uuid
 
 # import requests
 
@@ -10,6 +12,11 @@ def lambda_handler(event, context):
     ----------
     event: dict, required
         API Gateway Lambda Proxy Input Format
+
+        Provide an event that contains the following keys:
+        - extension: extension of image to be uploaded
+        - imageName: name of the image to be stored in s3
+        - path: s3 path to store object
 
         Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
 
@@ -25,18 +32,41 @@ def lambda_handler(event, context):
         Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
     """
 
-    # try:
-    #     ip = requests.get("http://checkip.amazonaws.com/")
-    # except requests.RequestException as e:
-    #     # Send some context about this error to Lambda Logs
-    #     print(e)
+    presignedUploadUrl = create_presigned_url("jd-tier-list-images", "test")
 
-    #     raise e
+    guid = uuid.uuid4()
 
     return {
         "statusCode": 200,
+        "headers": {
+            "Access-Control-Allow-Origin": "*",
+            'Content-Type': 'application/json'
+        },
         "body": json.dumps({
-            "message": "hello world",
-            # "location": ip.text.replace("\n", "")
+            "message": presignedUploadUrl,
+            "guid": str(guid)
         }),
     }
+
+def create_presigned_url(bucket_name, object_name, expiration=3600):
+    """Generate a presigned URL to upload an S3 object
+
+    :param bucket_name: string
+    :param object_name: string
+    :param expiration: Time in seconds for the presigned URL to remain valid
+    :return: Presigned URL as string. If error, returns None.
+    """
+
+    # Generate a presigned URL for the S3 object
+    s3_client = boto3.client('s3')
+    try:
+        response = s3_client.generate_presigned_url('put_object',
+                                                    Params={'Bucket': bucket_name,
+                                                            'Key': object_name},
+                                                    ExpiresIn=expiration)
+    except ClientError as e:
+        logging.error(e)
+        return None
+
+    # The response contains the presigned URL
+    return response
