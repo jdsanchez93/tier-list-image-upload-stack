@@ -57,6 +57,14 @@ Resources:
     Properties:
       BucketName: jd-tier-list-images
       AccessControl: PublicRead
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - '*'
+            AllowedMethods:
+              - PUT
+            AllowedOrigins:
+              - '*'
 
 Outputs:
   HelloWorldFunction:
