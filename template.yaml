@@ -16,17 +16,17 @@ Resources:
     Properties:
       StageName: prod
       MethodSettings:
-        - ResourcePath: /hello
+        - ResourcePath: /upload
           HttpMethod: POST
       Cors:
         AllowMethods: "'POST'"
         AllowOrigin: "'*'"
         AllowHeaders: "'Content-Type'"
 
-  HelloWorldFunction:
+  GenerateUploadUrlFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: hello_world/
+      CodeUri: generate_upload_url/
       Handler: app.lambda_handler
       Runtime: python3.9
       Timeout: 5
@@ -36,7 +36,7 @@ Resources:
         ApiEvent:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /hello
+            Path: /upload
             Method: post
             RestApiId:
               Ref: ApiGatewayApi
@@ -66,12 +66,12 @@ Resources:
               - '*'
 
 Outputs:
-  HelloWorldFunction:
+  GenerateUploadUrlFunction:
     Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt HelloWorldFunction.Arn
-  HelloWorldFunctionIamRole:
+    Value: !GetAtt GenerateUploadUrlFunction.Arn
+  GenerateUploadUrlFunctionIamRole:
     Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt HelloWorldFunctionRole.Arn
+    Value: !GetAtt GenerateUploadUrlFunctionRole.Arn
   BucketName:
     Value: !Ref TierListImageBucket
     Description: Name of the bucket
