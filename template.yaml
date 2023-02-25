@@ -56,7 +56,6 @@ Resources:
     Type: 'AWS::S3::Bucket'
     Properties:
       BucketName: jd-tier-list-images
-      AccessControl: PublicRead
       CorsConfiguration:
         CorsRules:
           - AllowedHeaders:
