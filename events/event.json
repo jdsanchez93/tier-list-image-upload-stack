@@ -1,5 +1,5 @@
 {
-  "body": "{\"message\": \"hello world\"}",
+  "body": "{\"tierListId\": 1,\"extension\": \".jpg\"}",
   "resource": "/hello",
   "path": "/hello",
   "httpMethod": "GET",

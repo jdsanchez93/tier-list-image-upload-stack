@@ -63,7 +63,7 @@ The SAM CLI installs dependencies defined in `hello_world/requirements.txt`, cre
 
 Test a single function by invoking it directly with a test event. An event is a JSON document that represents the input that the function receives from the event source. Test events are included in the `events` folder in this project.
 
-Run functions locally and invoke them with the `sam local invoke` command.
+Run functions locally and invoke them with the `sam local invoke --profile <profile>` command.
 
 ```bash
 tier-list-image-upload-stack$ sam local invoke HelloWorldFunction --event events/event.json

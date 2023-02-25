@@ -15,8 +15,7 @@ def lambda_handler(event, context):
 
         Provide an event that contains the following keys:
         - extension: extension of image to be uploaded
-        - imageName: name of the image to be stored in s3
-        - path: s3 path to store object
+        - tierListId: unique id of tier list; used as the prefix for the s3 object
 
         Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
 
@@ -32,9 +31,26 @@ def lambda_handler(event, context):
         Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
     """
 
-    presignedUploadUrl = create_presigned_url("jd-tier-list-images", "test")
+    body = json.loads(event.get("body"))
+    extension = body.get("extension", "")
+    tierListId = body.get("tierListId", "")
+
+    if (extension == "" or tierListId == ""):
+        return {
+            "statusCode": 400,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                'Content-Type': 'application/json'
+            },
+            "body": json.dumps({
+                "error": "The following fields are required in the body: extension, tierListId",
+                "message": "The following fields are required in the body: extension, tierListId"
+            }),
+        }
 
     guid = uuid.uuid4()
+    s3ObjectName = str(tierListId) + "/" + str(guid) + extension
+    presignedUploadUrl = create_presigned_url("jd-tier-list-images", s3ObjectName)
 
     return {
         "statusCode": 200,
@@ -43,8 +59,8 @@ def lambda_handler(event, context):
             'Content-Type': 'application/json'
         },
         "body": json.dumps({
-            "message": presignedUploadUrl,
-            "guid": str(guid)
+            "s3ObjectName": s3ObjectName,
+            "uploadUrl": presignedUploadUrl
         }),
     }
 
