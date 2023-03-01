@@ -10,3 +10,16 @@ confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
 disable_rollback = true
 image_repositories = []
+
+[dev]
+[dev.deploy]
+[dev.deploy.parameters]
+stack_name = "dev-tier-list-image-upload-stack"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1wrm3yf5oc4gc"
+s3_prefix = "dev-tier-list-image-upload-stack"
+region = "us-east-2"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+disable_rollback = true
+parameter_overrides = "BucketName=\"dev-tier-list-images\""
+image_repositories = []

@@ -10,6 +10,11 @@ Globals:
   Function:
     Timeout: 3
 
+Parameters: 
+  BucketName: 
+    Description: Name of s3 bucket
+    Type: String
+
 Resources:
   ApiGatewayApi:
     Type: AWS::Serverless::Api
@@ -30,6 +35,9 @@ Resources:
       Handler: app.lambda_handler
       Runtime: python3.9
       Timeout: 5
+      Environment:
+        Variables:
+          bucketName: !Ref BucketName
       Architectures:
         - x86_64
       Events:
@@ -55,7 +63,8 @@ Resources:
   TierListImageBucket:
     Type: 'AWS::S3::Bucket'
     Properties:
-      BucketName: jd-tier-list-images
+      AccessControl: Private
+      BucketName: !Ref BucketName
       CorsConfiguration:
         CorsRules:
           - AllowedHeaders:
@@ -64,6 +73,25 @@ Resources:
               - PUT
             AllowedOrigins:
               - '*'
+
+  S3BucketReadPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Policy for tier list bucket read access
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement: 
+        - Effect: Allow
+          Action: 
+            - "s3:GetObject"
+          Resource: !Join 
+              - ''
+              - - !GetAtt TierListImageBucket.Arn
+                - /*
+        - Effect: Allow
+          Action: 
+            - "s3:ListObject"
+          Resource: !GetAtt TierListImageBucket.Arn
 
 Outputs:
   GenerateUploadUrlFunction:

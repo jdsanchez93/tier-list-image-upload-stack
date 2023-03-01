@@ -1,8 +1,7 @@
 import json
 import boto3
 import uuid
-
-# import requests
+import os
 
 
 def lambda_handler(event, context):
@@ -35,6 +34,8 @@ def lambda_handler(event, context):
     extension = body.get("extension", "")
     tierListId = body.get("tierListId", "")
 
+    bucketName = os.environ['bucketName']
+
     if (extension == "" or tierListId == ""):
         return {
             "statusCode": 400,
@@ -50,7 +51,7 @@ def lambda_handler(event, context):
 
     guid = uuid.uuid4()
     s3ObjectName = str(tierListId) + "/" + str(guid) + extension
-    presignedUploadUrl = create_presigned_url("jd-tier-list-images", s3ObjectName)
+    presignedUploadUrl = create_presigned_url(bucketName, s3ObjectName)
 
     return {
         "statusCode": 200,
