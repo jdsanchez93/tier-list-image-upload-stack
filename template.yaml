@@ -92,6 +92,13 @@ Resources:
           Action: 
             - "s3:ListObject"
           Resource: !GetAtt TierListImageBucket.Arn
+        - Effect: Allow
+          Action: 
+            - "s3:DeleteObject"
+          Resource: !Join 
+              - ''
+              - - !GetAtt TierListImageBucket.Arn
+                - /*
 
 Outputs:
   GenerateUploadUrlFunction:

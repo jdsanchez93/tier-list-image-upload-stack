@@ -11,6 +11,7 @@ capabilities = "CAPABILITY_IAM"
 disable_rollback = true
 parameter_overrides = "BucketName=\"dev-tier-list-images\""
 image_repositories = []
+profile = "new"
 
 [prod]
 [prod.deploy]
@@ -22,3 +23,4 @@ region = "us-east-2"
 capabilities = "CAPABILITY_IAM"
 parameter_overrides = "BucketName=\"prod-tier-list-images\""
 image_repositories = []
+profile = "new"
